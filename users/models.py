@@ -45,7 +45,7 @@ class Payment(models.Model):
         ("Non-cash", "Безналичный расчет"),
     ]
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name="Пользователь", **NULLABLE
+        User, on_delete=models.CASCADE, related_name='user_payment', verbose_name="Пользователь", **NULLABLE
     )
     date_of_payment = models.DateTimeField(
         auto_now_add=True, verbose_name="Дата оплаты"
