@@ -20,7 +20,7 @@ class UserViewSet(ModelViewSet):
 
     def get_permissions(self):
         """Allow any user (authenticated or not) to perform create action"""
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = [AllowAny]
         return super().get_permissions()
 
@@ -29,6 +29,5 @@ class PaymentListApiView(ListAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ('paid_course', 'paid_lesson', 'payment_method')
-    ordering_fields = ('payment_date',)
-
+    filterset_fields = ("paid_course", "paid_lesson", "payment_method")
+    ordering_fields = ("payment_date",)
