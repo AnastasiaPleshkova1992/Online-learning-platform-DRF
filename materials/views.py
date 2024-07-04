@@ -2,12 +2,22 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, \
-    get_object_or_404
+from rest_framework.generics import (
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+    DestroyAPIView,
+    get_object_or_404,
+)
 
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import CustomPagination
-from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
+from materials.serializers import (
+    CourseSerializer,
+    LessonSerializer,
+    SubscriptionSerializer,
+)
 from users.permissions import IsModerator, IsOwner
 
 
@@ -31,11 +41,11 @@ class CourseViewSet(ModelViewSet):
 
     def get_permissions(self):
         """Get the permissions"""
-        if self.action in ['update', 'partial_update', 'list', 'retrieve']:
+        if self.action in ["update", "partial_update", "list", "retrieve"]:
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = [IsAuthenticated, ~IsModerator]
-        if self.action == 'destroy':
+        if self.action == "destroy":
             self.permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
         return super().get_permissions()
 
@@ -89,16 +99,16 @@ class SubscriptionAPIView(APIView):
     def post(self, *args, **kwargs):
         """Get response depending on the action"""
         user = self.request.user
-        course_id = self.request.data.get('course')
+        course_id = self.request.data.get("course")
         course_item = get_object_or_404(Course, pk=course_id)
         subs_item = Subscription.objects.filter(user=user, course=course_item)
         # If the user has a subscription to this course, we delete it
         if subs_item.exists():
             subs_item.delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
         # If the user does not have a subscription to this course, we create it
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'Подписка добавлена'
+            message = "Подписка добавлена"
         # Returning the response to the API
         return Response({"message": message})
