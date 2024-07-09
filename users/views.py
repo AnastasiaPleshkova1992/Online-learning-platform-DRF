@@ -1,9 +1,13 @@
+from datetime import datetime
+
+import pytz
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters
 
+from config import settings
 from users.models import User, Payment
 from users.serializers import UserSerializer, PaymentSerializer
 from users.services import create_stripe_product, create_stripe_price, create_stripe_session
@@ -16,6 +20,7 @@ class UserViewSet(ModelViewSet):
     def perform_create(self, serializer):
         """Hashes the password and makes the user active"""
         user = serializer.save(is_active=True)
+        user.last_login = datetime.now(pytz.timezone(settings.TIME_ZONE))
         user.set_password(user.password)
         user.save()
 
